@@ -135,6 +135,15 @@ import MetaCodable
 	/// This event should be preceded by a `cancelResponse` client event to stop the generation of the current response. [Learn more](https://platform.openai.com/docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc).
 	@CodedAs("output_audio_buffer.clear")
 	case outputAudioBufferClear(eventId: String?)
+
+	/// Translation sessions only: Send this event to close the translation session gracefully.
+	///
+	/// After sending, continue reading events until you receive a `session.closed` server event, then close the connection.
+	/// Closing the WebSocket immediately can drop translated output still draining from the session.
+	///
+	/// - Parameter eventId: Optional client-generated ID used to identify this event.
+	@CodedAs("session.close")
+	case closeSession(eventId: String?)
 }
 
 public extension ClientEvent {
@@ -281,5 +290,12 @@ public extension ClientEvent {
 	/// This event should be preceded by a `cancelResponse` client event to stop the generation of the current response. [Learn more](https://platform.openai.com/docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc).
 	static func outputAudioBufferClear(withEventId eventId: String? = nil) -> ClientEvent {
 		.outputAudioBufferClear(eventId: eventId)
+	}
+
+	/// Translation sessions only: Close the translation session gracefully.
+	///
+	/// - Parameter eventId: Optional client-generated ID used to identify this event.
+	static func closeSession(withEventId eventId: String? = nil) -> ClientEvent {
+		.closeSession(eventId: eventId)
 	}
 }

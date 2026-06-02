@@ -4,7 +4,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-fileprivate let baseURL = URL(string: "https://api.openai.com/v1/realtime/calls")!
+fileprivate let baseURL = URL(string: "https://jp.api.openai.com/v1/realtime/calls")!
 
 package extension URLRequest {
 	static func webRTCConnectionRequest(ephemeralKey: String, model: Model) -> URLRequest {

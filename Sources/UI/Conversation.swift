@@ -18,6 +18,9 @@ public final class Conversation: @unchecked Sendable {
 	private let sessionUpdateCallback: SessionUpdateCallback?
 	private let errorStream: AsyncStream<ServerError>.Continuation
 
+	/// Called on every server event. Use this to track messages independently of `entries`.
+	public var onEvent: ((ServerEvent) -> Void)?
+
 	/// Whether to print debug information to the console.
 	public var debug: Bool
 
@@ -66,7 +69,9 @@ public final class Conversation: @unchecked Sendable {
 		self.sessionUpdateCallback = sessionUpdateCallback
 		(errors, errorStream) = AsyncStream.makeStream(of: ServerError.self)
 
-		task = Task.detached { [weak self] in
+		// FIX: Use Task (not Task.detached) so handleEvent runs on @MainActor,
+		// making entries/messages mutations visible to MainActor readers.
+		task = Task { [weak self] in
 			guard let self else { return }
 
 			do {
@@ -83,6 +88,14 @@ public final class Conversation: @unchecked Sendable {
 	}
 
 	deinit {
+		client.disconnect()
+		errorStream.finish()
+	}
+
+	/// Explicitly disconnect WebRTC and clean up resources.
+	/// Call this before releasing the Conversation to avoid resource leaks.
+	public func disconnect() {
+		task?.cancel()
 		client.disconnect()
 		errorStream.finish()
 	}
@@ -166,6 +179,7 @@ public final class Conversation: @unchecked Sendable {
 private extension Conversation {
 	func handleEvent(_ event: ServerEvent) throws {
 		if debug { print(event) }
+		onEvent?(event)
 
 		switch event {
 			case let .error(_, error):

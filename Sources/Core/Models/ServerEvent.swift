@@ -90,7 +90,7 @@ import MetaCodable
 		contentIndex: Int,
 		transcript: String,
 		logprobs: [LogProb]?,
-		usage: Response.Usage
+		usage: Response.Usage?
 	)
 
 	/// Returned when the text value of an input audio transcription content part is updated.
@@ -523,6 +523,28 @@ import MetaCodable
 	/// - Parameter rateLimits: List of rate limit information.
 	@CodedAs("rate_limits.updated")
 	case rateLimitsUpdated(eventId: String, rateLimits: [RateLimit])
+
+	// MARK: - Translation Session Events
+
+	/// Emitted by a translation session when translated transcript text is available.
+	///
+	/// - Parameter eventId: The unique ID of the server event.
+	/// - Parameter delta: The incremental translated transcript text.
+	@CodedAs("session.output_transcript.delta")
+	case sessionOutputTranscriptDelta(eventId: String, delta: String)
+
+	/// Emitted by a translation session when source (input) transcript text is available.
+	///
+	/// - Parameter eventId: The unique ID of the server event.
+	/// - Parameter delta: The incremental source transcript text.
+	@CodedAs("session.input_transcript.delta")
+	case sessionInputTranscriptDelta(eventId: String, delta: String)
+
+	/// Emitted when a translation session has been closed after a session.close client event.
+	///
+	/// - Parameter eventId: The unique ID of the server event.
+	@CodedAs("session.closed")
+	case sessionClosed(eventId: String)
 }
 
 extension ServerEvent: Identifiable {
@@ -571,6 +593,9 @@ extension ServerEvent: Identifiable {
 			case let .responseMCPCallCompleted(id, _, _): id
 			case let .responseMCPCallFailed(id, _, _): id
 			case let .rateLimitsUpdated(id, _): id
+			case let .sessionOutputTranscriptDelta(id, _): id
+			case let .sessionInputTranscriptDelta(id, _): id
+			case let .sessionClosed(id): id
 		}
 	}
 }

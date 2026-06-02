@@ -67,14 +67,14 @@ public struct Response: Identifiable, Equatable, Hashable, Codable, Sendable {
 		public let totalTokens: Int
 		public let inputTokens: Int
 		public let outputTokens: Int
-		public let inputTokenDetails: InputTokenDetails
-		public let outputTokenDetails: OutputTokenDetails
+		public let inputTokenDetails: InputTokenDetails?
+		public let outputTokenDetails: OutputTokenDetails?
 
 		public struct InputTokenDetails: Equatable, Hashable, Codable, Sendable {
 			public let textTokens: Int
 			public let audioTokens: Int
-			public let cachedTokens: Int
-			public let cachedTokensDetails: CachedTokensDetails
+			public let cachedTokens: Int?
+			public let cachedTokensDetails: CachedTokensDetails?
 
 			public struct CachedTokensDetails: Equatable, Hashable, Codable, Sendable {
 				public let textTokens: Int

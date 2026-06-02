@@ -167,8 +167,18 @@ private extension WebRTCConnector {
 
 		let (data, response) = try await URLSession.shared.data(for: request)
 
-		guard let response = response as? HTTPURLResponse, response.statusCode == 201, let remoteSdp = String(data: data, encoding: .utf8) else {
-			if (response as? HTTPURLResponse)?.statusCode == 401 { throw WebRTCError.invalidEphemeralKey }
+		guard let httpResponse = response as? HTTPURLResponse else {
+			throw WebRTCError.badServerResponse(response)
+		}
+
+		print("🌐 SDP POST response: HTTP \(httpResponse.statusCode)")
+
+		// GA API returns 201; legacy beta returned 200 — accept both
+		guard (httpResponse.statusCode == 200 || httpResponse.statusCode == 201),
+		      let remoteSdp = String(data: data, encoding: .utf8) else {
+			if httpResponse.statusCode == 401 { throw WebRTCError.invalidEphemeralKey }
+			let body = String(data: data, encoding: .utf8) ?? "(empty)"
+			print("❌ SDP POST failed: HTTP \(httpResponse.statusCode), body: \(body)")
 			throw WebRTCError.badServerResponse(response)
 		}
 

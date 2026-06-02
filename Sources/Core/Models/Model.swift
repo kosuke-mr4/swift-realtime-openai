@@ -1,12 +1,14 @@
 public enum Model: RawRepresentable, Equatable, Hashable, Codable, Sendable {
 	case gptRealtime
 	case gptRealtimeMini
+	case gptRealtime2
 	case custom(String)
 
 	public var rawValue: String {
 		switch self {
 			case .gptRealtime: return "gpt-realtime"
 			case .gptRealtimeMini: return "gpt-realtime-mini"
+			case .gptRealtime2: return "gpt-realtime-2"
 			case let .custom(value): return value
 		}
 	}
@@ -15,6 +17,7 @@ public enum Model: RawRepresentable, Equatable, Hashable, Codable, Sendable {
 		switch rawValue {
 			case "gpt-realtime": self = .gptRealtime
 			case "gpt-realtime-mini": self = .gptRealtimeMini
+			case "gpt-realtime-2": self = .gptRealtime2
 			default: self = .custom(rawValue)
 		}
 	}
