@@ -251,15 +251,16 @@ import HelperCoders
 			/// The format of output audio.
 			public var format: AudioFormat
 
+			/// Target language for translation sessions (ISO 639-1, e.g. "ja", "en").
+			/// Only used with `gpt-realtime-translate` model.
+			public var language: String?
+
 			/// Creates a new `Output` configuration.
-			///
-			/// - Parameter voice: The voice the model uses to respond.
-			/// - Parameter speed: The speed of the model's spoken response.
-			/// - Parameter format: The format of output audio.
-			public init(voice: Voice, speed: Double, format: AudioFormat) {
+			public init(voice: Voice, speed: Double, format: AudioFormat, language: String? = nil) {
 				self.voice = voice
 				self.speed = speed
 				self.format = format
+				self.language = language
 			}
 		}
 
