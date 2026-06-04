@@ -191,7 +191,10 @@ import HelperCoders
 			}
 
 			/// The format of input audio.
-			public var format: AudioFormat
+			///
+			/// Optional because translation sessions (`gpt-realtime-translate`) do not
+			/// include this field — the codec is fully negotiated via WebRTC SDP.
+			public var format: AudioFormat?
 
 			/// Configuration for input audio noise reduction.
 			///
@@ -226,7 +229,7 @@ import HelperCoders
 			/// - Parameter noiseReduction: Configuration for input audio noise reduction.
 			/// - Parameter transcription: Configuration for input audio transcription.
 			/// - Parameter turnDetection: Configuration for turn detection, either Server VAD or Semantic VAD.
-			public init(format: AudioFormat, noiseReduction: NoiseReduction? = nil, transcription: Transcription? = nil, turnDetection: TurnDetection? = nil) {
+			public init(format: AudioFormat? = nil, noiseReduction: NoiseReduction? = nil, transcription: Transcription? = nil, turnDetection: TurnDetection? = nil) {
 				self.format = format
 				self.transcription = transcription
 				self.turnDetection = turnDetection
@@ -239,24 +242,30 @@ import HelperCoders
 			/// The voice the model uses to respond.
 			///
 			/// Voice cannot be changed during the session once the model has responded with audio at least once.
-			public var voice: Voice
+			///
+			/// Optional because translation sessions do not include this field.
+			public var voice: Voice?
 
 			/// The speed of the model's spoken response.
 			///
 			/// `1.0` is the default speed. `0.25` is the minimum speed. `1.5` is the maximum speed.
 			///
 			/// This value can only be changed in between model turns, not while a response is in progress.
-			public var speed: Double
+			///
+			/// Optional because translation sessions do not include this field.
+			public var speed: Double?
 
 			/// The format of output audio.
-			public var format: AudioFormat
+			///
+			/// Optional because translation sessions negotiate codec via WebRTC SDP only.
+			public var format: AudioFormat?
 
 			/// Target language for translation sessions (ISO 639-1, e.g. "ja", "en").
 			/// Only used with `gpt-realtime-translate` model.
 			public var language: String?
 
 			/// Creates a new `Output` configuration.
-			public init(voice: Voice, speed: Double, format: AudioFormat, language: String? = nil) {
+			public init(voice: Voice? = nil, speed: Double? = nil, format: AudioFormat? = nil, language: String? = nil) {
 				self.voice = voice
 				self.speed = speed
 				self.format = format
@@ -296,7 +305,9 @@ import HelperCoders
 	/// The model can be instructed on response content and format, (e.g. "be extremely succinct", "act friendly", "here are examples of good responses") and on audio behavior (e.g. "talk quickly", "inject emotion into your voice", "laugh frequently").
 	///
 	/// The instructions are not guaranteed to be followed by the model, but they provide guidance to the model on the desired behavior.
-	public var instructions: String
+	///
+	/// Optional because translation sessions do not include this field.
+	public var instructions: String?
 
 	/// Maximum number of output tokens for a single assistant response, inclusive of tool calls.
 	///
@@ -323,7 +334,7 @@ import HelperCoders
 	/// Tools available to the model.
 	public var tools: [Tool]?
 
-	public init(id: String? = nil, audio: Audio, instructions: String, maxResponseOutputTokens: MaxResponseOutputTokens? = nil, modalities: [Modality]? = nil, model: Model, prompt: Prompt? = nil, temperature: Double? = nil, toolChoice: Tool.Choice? = nil, tools: [Tool]? = nil) {
+	public init(id: String? = nil, audio: Audio, instructions: String? = nil, maxResponseOutputTokens: MaxResponseOutputTokens? = nil, modalities: [Modality]? = nil, model: Model, prompt: Prompt? = nil, temperature: Double? = nil, toolChoice: Tool.Choice? = nil, tools: [Tool]? = nil) {
 		self.id = id
 		self.tools = tools
 		self.model = model
